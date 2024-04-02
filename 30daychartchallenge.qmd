@@ -1,0 +1,277 @@
+---
+title: "30DayChartChallenge"
+author: "Gabriela Coy"
+format: pdf
+editor: visual
+---
+
+## Día 1. Part to Whole
+
+Se utilizará el dataset de Titanic contenido en seaborn:
+
+Extraer datos:
+
+**Audiencia:** La visualización del gráfico del Titanic está dirigida a cualquier persona interesada en explorar y comprender los datos relacionados con el hundimiento del Titanic y las características de los pasajeros a bordo.
+
+**Objetivo:** Proporcionar una representación clara y concisa de la proporción de sobrevivientes y no sobrevivientes en el desastre del Titanic y comprender visualmente la distribución de sobrevivientes y no sobrevivientes según la clase de pasajeros en el Titanic.
+
+**Mensaje:** El mensaje principal es que la probabilidad de supervivencia variaba según la clase de pasajeros en el Titanic, con una proporción más alta de sobrevivientes en las clases superiores en comparación con las clases inferiores.
+
+**Elección de la herramienta:** - He elegido utilizar Python para crear esta visualización debido a su flexibilidad y capacidad para generar gráficos.
+
+```{r}
+Sys.setenv(RETICULATE_PYTHON = "C:/Users/denni/anaconda3")
+library(reticulate)
+```
+
+```{python}
+import seaborn as sns
+
+# Cargar el conjunto de datos del Titanic
+titanic_data = sns.load_dataset('titanic')
+
+# Mostrar las primeras filas del conjunto de datos
+print(titanic_data.head())
+
+```
+
+```{python}
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Calcular el número de sobrevivientes y no sobrevivientes por categoría
+# Obtener las clases de pasajeros únicas
+clases = ['First', 'Second', 'Third']  # Definir el orden deseado de las clases
+
+# Mapeo de nombres de clases
+nombre_clase = {'First': 'Primera Clase', 'Second': 'Segunda Clase', 'Third': 'Tercera Clase'}
+
+# Filtrar los datos para obtener solo las clases específicas y contar el número de sobrevivientes y no sobrevivientes
+data = titanic_data[titanic_data['class'].isin(clases)].copy()
+data['class'] = data['class'].map(nombre_clase)
+data['alive'] = data['alive'].map({'yes': 'Sobrevivientes', 'no': 'No Sobrevivientes'})
+data_counts = data.groupby(['class', 'alive']).size().unstack(fill_value=0)
+
+# Renombrar las columnas para que coincidan con las etiquetas de la leyenda
+data_counts.columns = ['S', 'NS']
+
+# Configurar el estilo de seaborn
+sns.set(style="whitegrid", font_scale=1.2)
+
+# Colores más vibrantes
+colors = ['#FF6347', '#4169E1']
+
+# Crear los gráficos de pie
+fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+for i, clase in enumerate(clases):
+    # Obtener el nombre de la clase mapeado
+    nombre = nombre_clase.get(clase, clase)
+    
+    # Obtener los datos para la clase actual
+    clase_data = data_counts.loc[nombre]
+    
+    # Crear el gráfico de pie
+    axes[i].pie(clase_data, labels=clase_data.index, colors=colors, autopct='%1.1f%%', startangle=140)
+    axes[i].set_title(nombre, fontname='Arial', fontsize=14)
+
+# Añadir título general
+plt.suptitle('Distribución de Sobrevivientes y No Sobrevivientes por Clase', fontsize=16, fontweight='bold')
+
+fig.text(0.5, 0.04, 'S: Sobrevivientes, NS: No Sobrevivientes', ha='center', fontsize=12)
+
+
+# Ajustar el espaciado entre los gráficos
+plt.tight_layout()
+
+plt.savefig('C:/Users/denni/OneDrive/Imágenes/01_part-to-whole.png')
+# Mostrar los gráficos
+plt.show()
+
+```
+
+## Día 2. Neo
+
+Se utilizará el dataset de Titanic contenido en seaborn:
+
+```{r}
+intro_ds <- "https://data.world/jonloyens/an-intro-to-dataworld-dataset"
+saved_cfg <- data.world::save_config("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJwcm9kLXVzZXItY2xpZW50OmdhYmltYXRoIiwiaXNzIjoiYWdlbnQ6Z2FiaW1hdGg6OjRkNzViMzFjLTVkYzUtNDYyNi1hMTZhLTU4ZWMyMzNiZjYwNiIsImlhdCI6MTcxMTkwNzk3MCwicm9sZSI6WyJ1c2VyX2FwaV9yZWFkIiwidXNlcl9hcGlfd3JpdGUiXSwiZ2VuZXJhbC1wdXJwb3NlIjp0cnVlLCJzYW1sIjp7fX0.ZN_nczDQm6R8qvudeBI7PRFmexOh8YM8EHV-0t6yv_xY4JyPWxgRGMGAJLpbviRGondWLT-DF1Ko6EB4xSl_9w")
+data.world::set_config(saved_cfg)
+
+sample_query <- data.world::qry_sql(paste0(
+  "SELECT t.Name, t.Height, s.AssistsPerGame ",
+  "FROM DataDotWorldBBallTeam as t ",
+  "JOIN DataDotWorldBBallStats as s ON t.Name = s.Name ",
+  "ORDER BY s.AssistsPerGame DESC"))
+
+data.world::query(sample_query, dataset = intro_ds)
+```
+
+## Día 3. Makeover
+
+```{r}
+
+library(tidyverse)
+library(rvest)
+library(polite)
+library(treemapify)
+library(countrycode)
+library(showtext)
+
+countrycode("Kosovo", "country.name", "continent")
+
+font_add_google("Truculenta", "truculenta")
+font_add_google("Roboto Slab", "robotoslab")
+showtext_auto()
+
+cols <- c("#00A5E3", "#8DD7BF", "#FF96C5", "#FF5768", "#FFBF65")
+names(cols) <- c("Asia", "Africa", "Oceania", "Americas", "Europe")
+cols2 <- colorspace::darken(cols, 0.8)
+names(cols2) <- c("Asia", "Africa", "Oceania", "Americas", "Europe")
+bg <- "#353C40"
+
+url <- "https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population"
+
+lst <- polite::scrape(polite::bow(url)) |> 
+  rvest::html_nodes("table.wikitable") |> 
+  rvest::html_table(fill = TRUE)
+
+plot_data <- lst[[1]] |> 
+  select(Location, Population) |> 
+  mutate(Population = parse_number(Population)) |> 
+  slice(-1) |> 
+  mutate(continent = countrycode(Location,"country.name", "continent",
+                                 custom_match = c(Kosovo = "Europe"))) |> 
+  mutate(Location = if_else(Location == "Democratic Republic of the Congo",
+                            "Congo", Location)) |> 
+  drop_na()
+
+plot_data |> 
+  ggplot(aes(area = Population, fill = continent,
+             subgroup = continent)) +
+  geom_treemap(colour = bg) +
+  geom_treemap_text(aes(label = Location,
+                        colour = continent),
+                    family = "robotoslab",
+                    size = 38) +
+  scale_fill_manual(values = cols) +
+  scale_colour_manual(values = cols2) +
+  labs(title = "PART TO WHOLE", 
+       subtitle = "population by location",
+       caption = "Data: Wikipedia") +
+  theme(
+    text = element_text(family = "truculenta",
+                        colour = "#D6CECC"),
+    legend.position = "none",
+    plot.background = element_rect(fill = bg,
+                                   colour = bg),
+    plot.title = element_text(size = 88,
+                              hjust = 0.5),
+    plot.subtitle = element_text(size = 54,
+                                 hjust = 0.5),
+    plot.caption = element_text(size = 42,
+                                hjust = 0.5),
+    plot.margin = margin(10, 10, 10, 10)
+  )
+
+ggsave(
+  "./2024/R/01_part-to-whole.png",
+  bg = bg,
+  width = 8,
+  height = 6,
+)
+
+```
+
+## Día 4. Waffle
+
+```{r}
+library(tidyverse)
+library(waffle)
+
+waffle::install_fa_fonts()
+fontdir <- "C:/Users/denni/AppData/Local/R/win-library/4.3/waffle/fonts/"
+font_add(family = waffle::fa5_brand,
+         regular = paste0(fontdir, "fa-brands-400.ttf"))
+font_add(family = waffle::fa5_solid,
+         regular = paste0(fontdir, "fa-solid-900.ttf"))
+
+# https://www.dafont.com/market-deco.font
+
+font_add_google("Sen")
+showtext_auto()
+url <- "https://www.datos.gov.co/resource/ha6j-pa2r.json"
+parametros <- list(municipio = "BOGOTÁ D.C. (CT)")
+respuesta <- httr::GET(url = url, query = parametros)
+datos_json <- httr::content(respuesta, as = "text")
+datos_df <- jsonlite::fromJSON(datos_json)
+
+# Contar el número de accidentes por género
+accidentes_por_genero <- datos_df %>%
+  group_by(genero) %>%
+  summarize(conteo = n()) %>%
+  mutate(porcentaje = (conteo / sum(conteo)) * 100)
+
+accidentes_por_genero <- accidentes_por_genero %>%
+  rename(Genero = genero)
+
+icons <- c("female", "male")
+
+ggplot(accidentes_por_genero, aes(label = Genero, values = porcentaje, color = Genero)) +
+  geom_pictogram(size = 8) +
+  scale_label_pictogram(values = icons)+
+  ggtitle("Porcentaje de Accidentes Automovilísticos por Género en Bogotá D.C.\n(Un icono representa 1 punto porcentual)") + theme(plot.title = element_text(hjust = 0.5))+
+  scale_colour_manual(values = c("#FAAAEA", "#094BA9"))
+```
+
+## Día 5. Diverging
+
+## Día 6. OECD (data day)
+
+## Día 7. Hazards
+
+## Día 8. Circular
+
+## Día 9. Major/Minor
+
+## Día 10. Physical
+
+## Día 11. Mobile-friendly
+
+## Día 12. Reuters Graphics (data day)
+
+## Día 13. Family
+
+## Día 14. Heatmap
+
+## Día 15. Historical
+
+## Día 16. Weather
+
+## Día 17. Networks
+
+## Día 18. Asian Development Bank (data day)
+
+## Día 19. Dinosaurs
+
+## Día 20. Correlation
+
+## Día 21. Green energy
+
+## Día 22. Mobility
+
+## Día 23. Tiles
+
+## Día 24. ILO Region for Africa (data day)
+
+## Día 25. Global change
+
+## Día 26. AI
+
+## Día 27. Good/Bad
+
+## Día 28. Trend
+
+## Día 29. Black'n'white
+
+## Día 30. FiveThirtyEight (data day)
