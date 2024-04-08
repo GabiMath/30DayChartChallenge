@@ -1,8 +1,11 @@
-Time, Event, Description
-1991, "The first website", "On August 6, 1991, the first website ever came online. The site was created by Tim Berners-Lee, and detailed the World Wide Web (W3) project."
-1994, "Early web design", "Though methods of styling websites existed in some form or another, Håkon Wium Lie first proposed CSS in 1994 while working at CERN."
-1996, "First formal CSS", "The World Wide Web Consortium (W3C), also founded by Berners-Lee, released the first formal specification for Cascading Style Sheets, level 1 (CSS1)."
-1996, "First liquid layout", "Liquid layouts, first coined and popularized by Glenn Davis, were revolutionary at the time, and can be considered one of the first major methods of responsive web design."
-2004, "Resolution dependent layouts", "In 2004, Cameron Adams wrote a blog post where he detailed a method of using JavaScript to swap out different stylesheets based on the size of the browser window."
-2010, "New way of thinking about flexible web design", "A developer named Ethan Marcotte published an article in A List Apart where he outlined a new way of thinking about flexible web design. In the article, Marcotte listed three important components for creating a responsive website: fluid grids, flexible images, and media queries."
-2012, "Media queries", "Media queries refer to CSS media queries that were available in 2010, but not widely adopted until its official release as a W3 Recommendation in 2012."
+Event, Description
+Mobile phone (any),92.3%
+Laptop or desktop (any),65.6%
+Smartphone,91%
+Feature phone,5.2%
+Tablet device,27.3%
+Own laptop or desktop,59.1%
+Work laptop or desktop,28.6%
+Connected television,31.9%
+Smart home device,15.4%
+Games console,12.7% 
